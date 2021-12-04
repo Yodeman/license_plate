@@ -3,3 +3,12 @@ torchvision>=0.8.1
 numpy>=1.19.1
 opencv-python-headless
 pillow>=7.0.0
+matplotlib>=3.2.2
+PyYAML>=5.3.1
+scipy>=1.4.1
+tqdm>=4.41.0
+tensorboard>=2.4.1
+seaborn>=0.11.0
+pandas
+pycocotools>=2.0
+thop
