@@ -2,7 +2,6 @@ import os
 import cv2
 import torch
 import tempfile
-from PIL import Image
 from datetime import datetime
 from torch.autograd import Variable
 from crnet import *
@@ -129,7 +128,8 @@ def main():
                 pred = detect(img, (640, 640))
             else:
                 break
-            stframe.image(Image.fromarray(cv2.cvtColor(pred, cv2.COLOR_BGR2RGB)), width=720)
+            img_pred = cv2.cvtColor(pred, cv2.COLOR_BGR2RGB)
+            stframe.image(img_pred, width=720)
         cap.release()
 
         st.write("Seen plates:")
