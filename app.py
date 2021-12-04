@@ -101,41 +101,43 @@ def main():
             )
     video = st.file_uploader("Your video input.")
     if st.button("start recognition"):
-        ms = datetime.now().microsecond
-        tempf = tempfile.NamedTemporaryFile(delete=True, prefix=str(ms), dir=".", suffix=".mp4")
-        tempf.write(video.read())
-        seen_plates = []
-        plate_model = torch.load('./best.pt')['model'].float()
-        number_model = torch.load("./crnet.pt").eval()
+        if not video: st.warning("no input video!!!")
+        else:
+            ms = datetime.now().microsecond
+            tempf = tempfile.NamedTemporaryFile(delete=True, prefix=str(ms), dir=".", suffix=".mp4")
+            tempf.write(video.read())
+            seen_plates = []
+            plate_model = torch.load('./best.pt')['model'].float()
+            number_model = torch.load("./crnet.pt").eval()
 
-        num_classes = 35
-        confidence = 0.6
-        nms_thresh = 0.4
-        classes = load_classes("./lp-recognition.names")
-        inp_dim = 128
-        inp_dim2 = 352
-        CUDA = torch.cuda.is_available()
+            num_classes = 35
+            confidence = 0.6
+            nms_thresh = 0.4
+            classes = load_classes("./lp-recognition.names")
+            inp_dim = 128
+            inp_dim2 = 352
+            CUDA = torch.cuda.is_available()
     
-        colors = Colors()
+            colors = Colors()
 
-        #cap = cv2.VideoCapture("./video/video1.mp4")#"./images/michael/img/imgi/image_%04d.jpg"
-        cap = cv2.VideoCapture(tempf.name)
-        assert cap.isOpened(), "Unable to read from source..."
-        stframe = st.empty()
-        while cap.isOpened():
-            ret, img = cap.read()
-            if ret:
-                pred = detect(img, (640, 640))
-            else:
-                break
-            img_pred = cv2.cvtColor(pred, cv2.COLOR_BGR2RGB)
-            stframe.image(img_pred, width=720)
-        cap.release()
+            #cap = cv2.VideoCapture("./video/video1.mp4")#"./images/michael/img/imgi/image_%04d.jpg"
+            cap = cv2.VideoCapture(tempf.name)
+            assert cap.isOpened(), "Unable to read from source..."
+            stframe = st.empty()
+            while cap.isOpened():
+                ret, img = cap.read()
+                if ret:
+                    pred = detect(img, (640, 640))
+                else:
+                    break
+                img_pred = cv2.cvtColor(pred, cv2.COLOR_BGR2RGB)
+                stframe.image(img_pred, width=720)
+            cap.release()
 
-        st.write("Seen plates:")
-        st.write("\n".join(seen_plates))
+            st.write("Seen plates:")
+            st.write("\n".join(seen_plates))
     
-        torch.cuda.empty_cache()
+            torch.cuda.empty_cache()
 
 if __name__ == "__main__":
     main()
